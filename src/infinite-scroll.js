@@ -261,7 +261,7 @@ angular.module(MODULE_NAME, [])
         return $interval.cancel(checkInterval);
       }
 
-      checkInterval = $interval(intervalCheck,0,0, false);
+      checkInterval = $interval(intervalCheck, 0, 0, false);
       return checkInterval;
     },
   }),
