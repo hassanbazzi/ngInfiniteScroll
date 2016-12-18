@@ -6,6 +6,7 @@ TARGET_BRANCH="master"
 
 # Run only test cases if this is not a release
 if [ -z "$TRAVIS_TAG" ]; then
+    echo "exiting"
     exit 0
 fi
 
