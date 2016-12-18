@@ -5,8 +5,8 @@ const MODULE_NAME = 'infinite-scroll';
 angular.module(MODULE_NAME, [])
   .value('THROTTLE_MILLISECONDS', null)
   .directive('infiniteScroll', [
-    '$rootScope', '$window', '$interval', 'THROTTLE_MILLISECONDS',
-    ($rootScope, $window, $interval, THROTTLE_MILLISECONDS) =>
+    '$rootScope', '$window', '$timeout', '$interval', 'THROTTLE_MILLISECONDS',
+    ($rootScope, $window, $timeout, $interval, THROTTLE_MILLISECONDS) =>
   ({
     scope: {
       infiniteScroll: '&',
@@ -27,7 +27,7 @@ angular.module(MODULE_NAME, [])
       let immediateCheck = true;
       let useDocumentBottom = false;
       let unregisterEventListener = null;
-      let checkInterval = false;
+      let checkTimeout = false;
 
       function height(element) {
         const el = element[0] || element;
@@ -93,7 +93,7 @@ angular.module(MODULE_NAME, [])
             }
           }
         } else {
-          if (checkInterval) { $interval.cancel(checkInterval); }
+          if (checkTimeout) { $timeout.cancel(checkTimeout); }
           checkWhenEnabled = false;
         }
       }
@@ -110,7 +110,7 @@ angular.module(MODULE_NAME, [])
 
         function later() {
           previous = new Date().getTime();
-          $interval.cancel(timeout);
+          $timeout.cancel(timeout);
           timeout = null;
           return func.call();
         }
@@ -119,12 +119,13 @@ angular.module(MODULE_NAME, [])
           const now = new Date().getTime();
           const remaining = wait - (now - previous);
           if (remaining <= 0) {
-            $interval.cancel(timeout);
+            $timeout.cancel(timeout);
             timeout = null;
             previous = now;
             func.call();
           } else if (!timeout) {
-            timeout = $interval(later, remaining, 1);
+            // A digest cycle is not required everytime the timer runs
+            timeout = $interval(later, remaining, 0, false);
           }
         }
 
@@ -141,8 +142,8 @@ angular.module(MODULE_NAME, [])
           unregisterEventListener();
           unregisterEventListener = null;
         }
-        if (checkInterval) {
-          $interval.cancel(checkInterval);
+        if (checkTimeout) {
+          $timeout.cancel(checkTimeout);
         }
       }
 
@@ -254,15 +255,16 @@ angular.module(MODULE_NAME, [])
         immediateCheck = scope.$eval(attrs.infiniteScrollImmediateCheck);
       }
 
-      function intervalCheck() {
+      function timeoutCheck() {
         if (immediateCheck) {
           handler();
         }
-        return $interval.cancel(checkInterval);
+        return $timeout.cancel(checkTimeout);
       }
-
-      checkInterval = $interval(intervalCheck);
-      return checkInterval;
+      // we make sure to call $timeout since forcing a digest cycle isn't
+      // neccesary at this point
+      checkTimeout = $timeout(timeoutCheck, 0, false);
+      return checkTimeout;
     },
   }),
 
