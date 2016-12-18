@@ -1,6 +1,6 @@
 {
   "name": "ng-infinite-scroll",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Infinite scrolling for AngularJS",
   "repository": {
     "type": "git",
@@ -10,6 +10,7 @@
   "browser": "build/ng-infinite-scroll.js",
   "scripts": {
     "prepublish": "grunt",
+    "postinstall": "grunt",
     "test": "grunt test:protractor-local"
   },
   "author": {
