@@ -5,7 +5,7 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
 env:
   global:
-  - ENCRYPTION_LABEL: fefb9ef3c8d6
+  - ENCRYPTION_LABEL: 4421f9ff4b5f
   - COMMIT_AUTHOR_EMAIL: 'contact@hassanbazzi.com'
 before_script:
   - "export DISPLAY=:99.0"
