@@ -3,18 +3,16 @@ set -e # Exit with nonzero exit code if anything fails
 
 SOURCE_BRANCH="master"
 TARGET_BRANCH="master"
+ENCRYPTION_LABEL="4421f9ff4b5f"
+COMMIT_AUTHOR_EMAIL="contact@hassanbazzi.com"
 
-# Run only test cases if this is not a release
-if [ -z "$TRAVIS_TAG" ]; then
-    echo "exiting"
-    exit 0
-fi
 
 # Get the deploy key by using Travis's stored variables to decrypt deploy_key.enc
 ENCRYPTED_KEY_VAR="encrypted_${ENCRYPTION_LABEL}_key"
 ENCRYPTED_IV_VAR="encrypted_${ENCRYPTION_LABEL}_iv"
-ENCRYPTED_KEY=${!ENCRYPTED_KEY_VAR}
-ENCRYPTED_IV=${!ENCRYPTED_IV_VAR}
+ENCRYPTED_KEY=${ENCRYPTED_KEY_VAR}
+ENCRYPTED_IV=${ENCRYPTED_IV_VAR}
+echo ${ENCRYPTED_IV}
 openssl aes-256-cbc -K $ENCRYPTED_KEY -iv $ENCRYPTED_IV -in id_rsa_nginfinite.enc -out deploy_key -d
 chmod 600 deploy_key
 eval `ssh-agent -s`
