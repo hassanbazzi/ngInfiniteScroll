@@ -10,7 +10,6 @@
   "browser": "build/ng-infinite-scroll.js",
   "scripts": {
     "prepublish": "grunt",
-    "postinstall": "grunt",
     "test": "grunt test:protractor-local"
   },
   "author": {
